@@ -93,36 +93,56 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             planeHeight = CGFloat( planeAnchor.extent.y )
             let planeGeometry = SCNBox(width: CGFloat(planeAnchor.extent.x), height: planeHeight, length: CGFloat(planeAnchor.extent.z), chamferRadius: 0.0)
             
-            planeGeometry.firstMaterial?.diffuse.contents = UIColor.green
+            planeGeometry.firstMaterial?.diffuse.contents = #imageLiteral(resourceName: "9aafd8bec215273db45bdf01b3dde8b5")
             planeGeometry.firstMaterial?.specular.contents = UIColor.white
+//            let material = SCNMaterial()
+//            material.diffuse.contents = #imageLiteral(resourceName: "9aafd8bec215273db45bdf01b3dde8b5")
+//            planeGeometry.materials.append(material)
+            //= SCNMaterial(#imageLiteral(resourceName: "9aafd8bec215273db45bdf01b3dde8b5"))
+//            planeGeometry.materials.append(SCNMaterial(#imageLiteral(resourceName: "9aafd8bec215273db45bdf01b3dde8b5")))
             let planeNode = SCNNode(geometry: planeGeometry)
             planeNode.position = SCNVector3Make(planeAnchor.center.x, Float(planeHeight / 2), planeAnchor.center.z)
             
             node?.addChildNode(planeNode)
             anchors.append(planeAnchor)
+            print("extend x \(planeAnchor.extent.x)" )
+            print("extend y \(planeAnchor.extent.y)" )
+            print("extend z \(planeAnchor.extent.z)" )
+            print("centre x \(planeAnchor.center.x)" )
+            print("centre y \(planeAnchor.center.y)" )
+            print("centre z \(planeAnchor.center.z)" )
+            print("anchor z \(planeAnchor.transform.columns.3.z)")
+            print("anchor x \(planeAnchor.transform.columns.3.x)")
+            print("anchor y \(planeAnchor.transform.columns.3.y)")
             
-            let image = sceneView.snapshot()
-            print(image.cgImage!)
-            let cropRect = CGRect(x:0, y:0, width:planeGeometry.length, height:planeGeometry.height)
             
-            UIGraphicsBeginImageContextWithOptions(cropRect.size, false, 0);
-            let context = UIGraphicsGetCurrentContext();
+            let width = planeAnchor.extent.x
+            let length = planeAnchor.extent.z
             
-            context?.translateBy(x: 0.0, y: image.size.height);
-            context?.scaleBy(x: 1.0, y: -1.0);
-            context?.draw(image.cgImage!, in: CGRect(x:0, y:0, width:image.size.width, height:image.size.height), byTiling: false);
-            context?.clip(to: [cropRect]);
+            let planeNode1 = createNewBubbleParentNode(latestPrediction)
+            let planeNode2 = createNewBubbleParentNode(latestPrediction)
             
-            var croppedImage = UIGraphicsGetImageFromCurrentImageContext();
-            UIGraphicsEndImageContext();
-            croppedImage?.draw(at: CGPoint(x: 0.0, y: 0.0))
+            planeNode1.position = SCNVector3Make( planeAnchor.transform.columns.3.x, planeAnchor.transform.columns.3.y, planeAnchor.transform.columns.3.z )
+            planeNode2.position = SCNVector3Make(planeAnchor.transform.columns.3.x , planeAnchor.transform.columns.3.y + length/2 , planeAnchor.transform.columns.3.z - width/2)
+
+            print(" ....... \(planeAnchor.transform.columns.3.y)")
+            print(" ....... \(width)")
+            print("...... \(length)")
+            sceneView.scene.rootNode.addChildNode(planeNode1)
+            sceneView.scene.rootNode.addChildNode(planeNode2)
+
             
-            print(croppedImage?.cgImage!)
+//            let node = SKView(frame: planeAnchor.extent.)
+
+
         } else {
             // haven't encountered this scenario yet
             print("not plane anchor \(anchor)")
         }
         
+        /*let node : SCNNode = createNewBubbleParentNode(latestPrediction)
+        sceneView.scene.rootNode.addChildNode(node)
+        node.position = SCNVector3Make()*/
         
         
         return node
